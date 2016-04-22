@@ -1,0 +1,426 @@
+
+
+<!doctype html>
+
+
+<html>
+<head>
+<meta charset="utf-8">
+<title>Mobile Scaling</title>
+
+
+<style>
+	body {margin:0px; padding:0px; background-color:#000; overflow:hidden;}
+	#myCanvas {position:absolute; left:0px; top:0px; background-color:black;}	
+</style>
+
+<script src="libraries/createjs-2015.11.26.min.js"></script>
+
+<script src="libraries/mobile.js"></script>
+
+<script>
+
+    window.addEventListener("load", function() {
+
+        console.log("hello");
+
+
+        var orientation
+        if (window.innerWidth > window.innerHeight) {
+        orientation = 'landscape';
+       
+    } else {
+        orientation = 'portrait';
+       
+    }
+
+        var stageW;
+        var stageH;
+        var ready = false;
+        var resize;
+
+        makeCanvas();
+
+        // put app code here
+
+        var stage = new createjs.Stage("myCanvas");
+        stage.enableMouseOver(10);  // leave out if mobile	
+        createjs.Touch.enable(stage, true);	
+        sizeStage();
+        console.log(stageW, stageH);
+
+        // handle asset loading and call main app function when complete
+        var manifest = [{src:"monkey.jpg", id:"monkey"}]; // array of objects
+        var preload = new createjs.LoadQueue(false); // use true if on the same server	
+        preload.on("complete", app);	 // call the main code when ready	
+        preload.loadManifest(manifest);
+
+        function app() {	
+        var board = new createjs.Shape();
+        var g = board.graphics;
+        stage.addChild(board);
+       
+        sizeBoard();
+
+
+            function sizeBoard() {
+                g.c(); // or g.clear(
+              
+            }
+
+                function newBoard() {
+                g.c(); 
+              
+            }
+
+
+    var cols = 4;
+    var rows = 4;
+    var tileColor = "salmon";
+    var letterColor ="black";
+  
+
+    var total = cols * rows;
+
+
+
+    var tiles = new createjs.Container();
+    stage.addChild(tiles);
+
+
+
+
+    var spacing = stageW*.007;
+    var size = (stageW*.5-spacing*(cols-1))/cols;
+    var tile, backing, letter;
+
+    var alphabet = "12345";
+    var words = ["1", "4", "5","3"];
+    var letters = [];
+      var word;
+    for (var i=0; i<words.length; i++) {
+        word = words[i];
+        var split = word.split("");
+
+        letters = letters.concat(split);
+    }
+    console.log(letters);
+     var add = total-letters.length;
+    for (i=0; i<add; i++) {
+        letters.push(alphabet.charAt(Math.floor(Math.random()*alphabet.length)));
+    }
+
+
+
+
+// var one = new createjs.Bitmap("one.png");
+// one.number="1";
+
+// var two = new createjs.Bitmap("two.png");
+// two.number="2";
+// var three =new createjs.Bitmap("three.png");
+// three.number="3";
+// var four = new createjs.Bitmap("four.png");
+// four.number="4";
+// var five = new createjs.Bitmap("five.png");
+// five.number="5";
+
+
+    var pics=[new createjs.Bitmap("one.png"),new createjs.Bitmap("two.png"),new createjs.Bitmap("three.png"), new createjs.Bitmap("four.png"),new createjs.Bitmap("five.png")];
+        shuffle(pics);
+   
+ 
+    var one =pics[0];
+    one.number="1";
+    console.log(one.number)
+    var two=pics[1];
+    two.number="2";
+    var three=pics[2];
+    three.number="3";
+    var four=pics[3];
+    four.number="4";
+    var five=pics[4];
+    five.number="5";
+
+
+        one.scaleX=one.scaleY=.4;
+        two.scaleX=two.scaleY=.4;
+        three.scaleX=three.scaleY=.4;
+        four.scaleX=four.scaleY=.4;
+        five.scaleX=five.scaleY=.4;
+
+
+    for (i=0; i<total; i++) {
+        tile = new createjs.Container();
+        tile.mouseChildren = false;   
+        var pic = pics[Math.floor(Math.random()*pics.length)];
+      console.log(pic.number)
+        tile.number=pic.number;
+        tile.addChild(pic);
+        tiles.addChild(tile);
+        tile.x = (size+spacing) * (i%cols);
+        tile.y = (size+spacing) * Math.floor(i/cols);
+    }
+   
+        tiles.x = stageW*.2;
+        tiles.y = stageW*.1;
+        tiles.cursor = "pointer";
+        tiles.on("mousedown", function(e) {
+        if (answer.text == "SWIPE TO SCORE") answer.text = "";
+        answer.text += e.target.number;
+        stage.update();
+        });
+
+
+
+
+    var numbers = new createjs.Container();
+    stage.addChild(numbers);
+
+ for (i=0; i<total; i++) {
+        number = new createjs.Container();
+        number.mouseChildren = false;
+        backing = new createjs.Shape();
+        backing.graphics.f(tileColor).rr(1,0,size,size,size*.4);
+        number .addChild(backing);
+        numbers.addChild(number );
+
+        number .x = (size+spacing) * (i%cols);
+        number .y = (size+spacing) * Math.floor(i/cols);  
+                number.letter = letters[i];
+        var letter = new createjs.Text(number.letter, size*.4 + "px arial", letterColor);
+        letter.textAlign = "center";
+        letter.textBaseline = "middle";
+        number.addChild(letter);
+        letter.x = letter.y = size/2; 
+
+
+    }
+
+    numbers.y = stageW*.30;
+    numbers.x = stageW*.2;
+
+
+    numbers.cursor = "pointer";
+    numbers.on("mousedown", function(e) {
+    if (answer.text == "SWIPE TO SCORE") answer.text = "";
+    answer.text += e.target.letter;
+
+    stage.update();
+    });
+
+
+
+
+ var tray = new createjs.Container();
+    tray.height = stageH*.15;
+    stage.addChild(tray);
+
+    var trayBacking = new createjs.Shape();
+    trayBacking.graphics.f("salmon").dr(0,0,stageW,tray.height);
+    tray.addChild(trayBacking);
+
+
+    var answer = new createjs.Text("SWIPE TO SCORE", size*.6 + "px arial", letterColor);
+    answer.textAlign = "center";
+    answer.textBaseline = "middle";
+    tray.addChild(answer);
+    answer.x = stageW/2;
+    answer.y = tray.height/2;
+
+    tray.y = stageH*.75;
+
+    tray.cursor = "pointer";
+
+ function shuffle(array) {
+        if (array == null) return;
+        var i = array.length, j, temp;
+        if (i == 0) return array;
+        while(--i) {
+            j = Math.floor(Math.random()*(i+1));
+            temp=array[i];
+            array[i]=array[j];
+            array[j]=temp;
+
+
+
+        }
+        return array;
+
+
+    }
+
+ tray.on("swipe", function(e) {
+        if (e.swipeX != -1) return;
+        createjs.Tween.get(answer)
+            .to({x:stageW/2 + e.swipeX*stageW*2}, 500)
+            .call(function(){
+
+                if (answer.text>= 0) {
+                    console.log("Score!!!");
+                 
+                }
+
+                answer.text = "";
+                answer.x = stageW/2;
+                stage.update();
+
+                createjs.Ticker.off("tick", tick);
+
+            });
+        var tick = createjs.Ticker.on("tick", stage);
+    });
+
+
+
+
+
+
+            var picture = new createjs.Bitmap(preload.getResult("monkey"));
+            // stage.addChild(picture);
+
+            var w = picture.getBounds().width;
+            var h = picture.getBounds().height;
+
+            sizePicture(); // when we call the function before declaring the function - it calls "hoisting" :) good to  know for our interview!
+            function sizePicture() {
+
+                var scale = stageW/w*.333; // - .333 - it means that it's a third of the screen
+                var scaleW = stageW/w;
+                console.log("scaleW = " + scaleW); // - horizontal scale measurement
+
+                //var scaleH = stageH/h;
+                console.log("scaleH = " + scaleH); // - vertical scale measurement
+                // this helps us to find out, how should we scale our picture based on the measurements of W and H (in console.log) (wheather we should scale it to fit in width position, or we want to fit it in vertical position)
+                var boundH = stageH*.9; // - the H bound
+                var scaleH = boundH/h;
+
+                var scale = Math.min(scaleW, scaleH)*.8; // - leftover is 20% (10% on each side)
+                picture.scaleX = picture.scaleY = scale;
+
+                // now we try to center our picture -> //
+                
+                picture.x = (stageW - w*scale)/2;
+                picture.y = (stageH - h*scale)/2;
+                //picture.y = stageH * .1;
+                picture.y = (boundH - h*scale)/2;
+                
+            }
+            
+            
+    
+          
+		
+           
+            
+            resize = function () {		
+                // here is where we put code to resize
+        orientation = (window.innerWidth> window.innerHeight) ? 'landscape' : 'portrait';
+        console.log(orientation);
+        if (window.innerWidth> window.innerHeight) {
+                newBoard();
+        
+
+            }
+        else{     
+                sizeBoard();
+
+        one.scaleX=one.scaleY=.2;
+        two.scaleX=two.scaleY=.2;
+        three.scaleX=three.scaleY=.2;
+        four.scaleX=four.scaleY=.2;
+        five.scaleX=five.scaleY=.2;
+                 
+            }
+
+                sizePicture();
+                stage.update();
+            }
+
+            stage.update();
+            ready = true;
+
+        }
+
+        // template
+        function makeCanvas() {
+            // make a canvas tag and apply attributes for id, width and height
+            var canvas = document.createElement("canvas");
+            canvas.setAttribute("id", "myCanvas");
+
+            // get maximum size for canvas
+            // note: iOS6 does not work from loading icon unless keep canvas within device size
+            // thank you apple for this and many other days of hell
+            largest = Math.max(window.innerWidth, screen.width, window.innerHeight, screen.height);
+            if (!/ip(hone|od|ad)/i.test(navigator.userAgent)) largest *= 3; // handle up to three monitors
+
+            console.log(largest);
+
+            canvas.setAttribute("width", largest);
+            canvas.setAttribute("height", largest);
+
+            // add our canvas tag
+            document.body.appendChild(canvas);
+
+
+            // stop the canvas from moving when certain keys are pressed (pgdwn, pgup, arrows, home, end)
+            // and stop scrollwheel from moving page
+            var a = function(e) {
+                if (!e) e = event;
+                console.log(e.keyCode);
+                if (e.keyCode && (e.keyCode >= 32 && e.keyCode <= 40)) e.preventDefault();
+            }
+            var b = function(e) {
+                if (!e) e = event; 
+                e.preventDefault();
+            }
+            var c = b;
+            window.addEventListener("keydown", a);
+            window.addEventListener("mousewheel", b);
+            window.addEventListener("DOMMouseScroll", c);
+
+            window.addEventListener('resize', function() {
+                sizeStage();
+                if (/android|nexus/i.test(navigator.userAgent)) {
+                    setTimeout(function() {
+                        sizeStage();
+                    }, 500); // to catch delayed screen sizes
+                }
+            });
+
+        }
+
+        function sizeStage() {
+            // earlier than IE9 does not have innerWidth
+            // inner is better on mobile when zoomed so can't always use client
+            // ternary operator
+            stageW = isNaN(window.innerWidth) ? window.clientWidth : window.innerWidth;
+            stageH = isNaN(window.innerHeight) ? window.clientHeight : window.innerHeight;
+
+            console.log(stageW, stageH);
+
+            if (stage) stage.setBounds(0,0,stageW,stageH);
+            if (ready) resize();
+
+        }
+
+
+    });
+
+</script>
+
+</head>
+
+<body>
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
