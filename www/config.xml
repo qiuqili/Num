@@ -17,8 +17,8 @@
     </author>
 
 
-    <name>Heroes of the Letter</name>
-    <description>It will be much helpful, if you can read Chinese.</description>
+    <name>Num</name>
+    <description>Play the game!.</description>
     <icon src="assets/icon.png" platform="ios" width="180" height="180" />
     <splash src="assets/landscape.png" platform="ios" width="750" height="1334" />
     <preference name="orientation" value="landscape" />
