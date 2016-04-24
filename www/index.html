@@ -1,5 +1,6 @@
 
 
+
 <!doctype html>
 
 
@@ -16,7 +17,7 @@
 
 <script src="libraries/createjs-2015.11.26.min.js"></script>
 
-<script src="libraries/mobile.js"></script>
+<script src="libraries/mobileswipe.js"></script>
 
 <script>
 
@@ -84,8 +85,8 @@
 
 
 
-    var tiles = new createjs.Container();
-    stage.addChild(tiles);
+    var dice = new createjs.Container();
+    stage.addChild(dice);
 
 
 
@@ -97,6 +98,7 @@
     var alphabet = "12345";
     var words = ["1", "4", "5","3"];
     var letters = [];
+
       var word;
     for (var i=0; i<words.length; i++) {
         word = words[i];
@@ -111,36 +113,33 @@
     }
 
 
+      
+       
+
+stage.update();
+
+            createjs.Ticker.off("tick",stage);
 
 
-// var one = new createjs.Bitmap("one.png");
-// one.number="1";
-
-// var two = new createjs.Bitmap("two.png");
-// two.number="2";
-// var three =new createjs.Bitmap("three.png");
-// three.number="3";
-// var four = new createjs.Bitmap("four.png");
-// four.number="4";
-// var five = new createjs.Bitmap("five.png");
-// five.number="5";
+            var tick = createjs.Ticker.on("tick",stage);
 
 
-    var pics=[new createjs.Bitmap("one.png"),new createjs.Bitmap("two.png"),new createjs.Bitmap("three.png"), new createjs.Bitmap("four.png"),new createjs.Bitmap("five.png")];
+var one = new createjs.Bitmap("one.png");
+one.number="1";
+
+var two = new createjs.Bitmap("two.png");
+two.number="2";
+var three =new createjs.Bitmap("three.png");
+three.number="3";
+var four = new createjs.Bitmap("four.png");
+four.number="4";
+var five = new createjs.Bitmap("five.png");
+five.number="5";
+
+
+    var pics=[one,two,three,four,five];
         shuffle(pics);
-   
- 
-    var one =pics[0];
-    one.number="1";
-    console.log(one.number)
-    var two=pics[1];
-    two.number="2";
-    var three=pics[2];
-    three.number="3";
-    var four=pics[3];
-    four.number="4";
-    var five=pics[4];
-    five.number="5";
+  
 
 
         one.scaleX=one.scaleY=.4;
@@ -150,22 +149,18 @@
         five.scaleX=five.scaleY=.4;
 
 
-    for (i=0; i<total; i++) {
-        tile = new createjs.Container();
-        tile.mouseChildren = false;   
-        var pic = pics[Math.floor(Math.random()*pics.length)];
-      console.log(pic.number)
-        tile.number=pic.number;
-        tile.addChild(pic);
-        tiles.addChild(tile);
-        tile.x = (size+spacing) * (i%cols);
-        tile.y = (size+spacing) * Math.floor(i/cols);
-    }
+    var pic = pics[Math.floor(Math.random()*pics.length)];
+    console.log(pic.number)
+    dice.number=pic.number;
+    dice.addChild(pic);
+    stage.addChild(dice);
+
    
-        tiles.x = stageW*.2;
-        tiles.y = stageW*.1;
-        tiles.cursor = "pointer";
-        tiles.on("mousedown", function(e) {
+       dice.alpha=0; 
+        dice.x = stageW*.4;
+        dice.y = stageW*.6;
+        dice.cursor = "pointer";
+        dice.on("mousedown", function(e) {
         if (answer.text == "SWIPE TO SCORE") answer.text = "";
         answer.text += e.target.number;
         stage.update();
@@ -188,32 +183,27 @@
         number .x = (size+spacing) * (i%cols);
         number .y = (size+spacing) * Math.floor(i/cols);  
                 number.letter = letters[i];
+
         var letter = new createjs.Text(number.letter, size*.4 + "px arial", letterColor);
         letter.textAlign = "center";
         letter.textBaseline = "middle";
         number.addChild(letter);
         letter.x = letter.y = size/2; 
-
+         // letter.alpha=0
 
     }
 
-    numbers.y = stageW*.30;
-    numbers.x = stageW*.2;
+    numbers.y = stageW*.10;
+    numbers.x = stageW*.3;
 
 
     numbers.cursor = "pointer";
-    numbers.on("mousedown", function(e) {
-    if (answer.text == "SWIPE TO SCORE") answer.text = "";
-    answer.text += e.target.letter;
-
-    stage.update();
-    });
-
+    
 
 
 
  var tray = new createjs.Container();
-    tray.height = stageH*.15;
+    tray.height = stageH*.12;
     stage.addChild(tray);
 
     var trayBacking = new createjs.Shape();
@@ -221,14 +211,14 @@
     tray.addChild(trayBacking);
 
 
-    var answer = new createjs.Text("SWIPE TO SCORE", size*.6 + "px arial", letterColor);
+    var answer = new createjs.Text("Swipe to show", size*.6 + "px arial", letterColor);
     answer.textAlign = "center";
     answer.textBaseline = "middle";
     tray.addChild(answer);
     answer.x = stageW/2;
     answer.y = tray.height/2;
 
-    tray.y = stageH*.75;
+    tray.y = stageH*.85;
 
     tray.cursor = "pointer";
 
@@ -242,25 +232,42 @@
             array[i]=array[j];
             array[j]=temp;
 
-
-
         }
         return array;
-
-
     }
 
+
+
+   mobile.swipe(tray);
  tray.on("swipe", function(e) {
         if (e.swipeX != -1) return;
         createjs.Tween.get(answer)
-            .to({x:stageW/2 + e.swipeX*stageW*2}, 500)
+            .to({x:stageW/2 + e.swipeX*stageW*2}, 300)
             .call(function(){
+                  createjs.Tween.get(dice)
+                  .to({alpha:1, visible:false}, 1000)
+                  console.log(dice.number)
+   
+    // window.location.href=window.location.href;
 
-                if (answer.text>= 0) {
-                    console.log("Score!!!");
-                 
-                }
 
+numbers.on("mousedown", function(e) {
+        if (answer.text == "Swipe to show") answer.text = "";
+        answer.text += e.target.letter;
+        console.log(answer.text)
+        if (dice.number==answer.text) {
+            console.log("Score!!!");
+         answer.text ="Score!!!";
+        }else{
+          answer.text ="Swipe ,Try again!!!!"
+          tray.on("swipe", function(e) {
+        window.location.href=window.location.href;
+          });  
+        }
+        stage.update();
+    });
+
+                
                 answer.text = "";
                 answer.x = stageW/2;
                 stage.update();
